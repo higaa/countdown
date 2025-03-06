@@ -1,0 +1,23 @@
+{
+  "name": "presentation-timer-app",
+  "version": "1.0.0",
+  "description": "A web application to display the remaining time for presentations.",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "live-server src"
+  },
+  "keywords": [
+    "presentation",
+    "timer",
+    "web",
+    "app"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.18.1"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.1"
+  }
+}

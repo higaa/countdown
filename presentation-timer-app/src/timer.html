@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>タイマー表示</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff; /* 初期背景色を白に設定 */
+            color: #000;
+            font-size: 10vw;
+        }
+        #timer {
+            text-align: center;
+        }
+        #fullscreenButton {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 10px 20px;
+            font-size: 1vw;
+            background-color: #444;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="timer">残り時間: 00:00</div>
+    <button id="fullscreenButton">全画面表示</button>
+    <script>
+        const timerDisplay = document.getElementById('timer');
+        const fullscreenButton = document.getElementById('fullscreenButton');
+        const socket = new WebSocket('ws://localhost:8080');
+
+        socket.addEventListener('message', event => {
+            const data = JSON.parse(event.data);
+            if (data.type === 'update') {
+                timerDisplay.textContent = data.time;
+                if (data.time.includes('残り時間:')) {
+                    const timeParts = data.time.split(' ');
+                    const timeValue = timeParts[1];
+                    if (timeValue.includes('分')) {
+                        document.body.style.backgroundColor = '#fff'; // 白色
+                        document.body.style.color = '#000'; // 黒色
+                    } else if (timeValue.includes('秒')) {
+                        document.body.style.backgroundColor = '#ffff00'; // 黄色
+                        document.body.style.color = '#000'; // 黒色
+                    }
+                } else if (data.time.includes('時間切れ')) {
+                    document.body.style.backgroundColor = '#ff0000'; // 赤色
+                    document.body.style.color = '#fff'; // 白色
+                }
+            }
+        });
+
+        // 全画面表示に切り替える関数
+        function requestFullScreen(element) {
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.mozRequestFullScreen) { // Firefox
+                element.mozRequestFullScreen();
+            } else if (element.webkitRequestFullscreen) { // Chrome, Safari and Opera
+                element.webkitRequestFullscreen();
+            } else if (element.msRequestFullscreen) { // IE/Edge
+                element.msRequestFullscreen();
+            }
+        }
+
+        // ボタンをクリックして全画面表示に切り替える
+        fullscreenButton.addEventListener('click', () => {
+            requestFullScreen(document.documentElement);
+        });
+    </script>
+</body>
+</html>
